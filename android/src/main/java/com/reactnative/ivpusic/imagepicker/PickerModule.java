@@ -601,9 +601,9 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
         if (enableRotationGesture) {
             // UCropActivity.ALL = enable both rotation & scaling
             options.setAllowedGestures(
-                    UCropActivity.ALL, // When 'scale'-tab active
-                    UCropActivity.ALL, // When 'rotate'-tab active
-                    UCropActivity.ALL  // When 'aspect ratio'-tab active
+                    UCropActivity.SCALE, // When 'scale'-tab active
+                    UCropActivity.ROTATE, // When 'rotate'-tab active
+                    UCropActivity.SCALE  // When 'aspect ratio'-tab active
             );
         }
         if (!disableCropperColorSetters) {
@@ -611,8 +611,7 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
         }
 
         UCrop.of(uri, Uri.fromFile(new File(this.getTmpDir(activity), UUID.randomUUID().toString() + ".jpg")))
-                .withMaxResultSize(width, height)
-                .withAspectRatio(width, height)
+                .useSourceImageAspectRatio()
                 .withOptions(options)
                 .start(activity);
     }
