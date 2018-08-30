@@ -87,8 +87,8 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
 
     //Light Blue 500
     private final String DEFAULT_WIDGET_COLOR = "#03A9F4";
-    private int width = 200;
-    private int height = 200;
+    private int width = -1;
+    private int height = -1;
 
     private Uri mCameraCaptureURI;
     private String mCurrentPhotoPath;
@@ -119,8 +119,8 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
         multiple = options.hasKey("multiple") && options.getBoolean("multiple");
         includeBase64 = options.hasKey("includeBase64") && options.getBoolean("includeBase64");
         includeExif = options.hasKey("includeExif") && options.getBoolean("includeExif");
-        width = options.hasKey("width") ? options.getInt("width") : width;
-        height = options.hasKey("height") ? options.getInt("height") : height;
+        width = options.hasKey("width") ? options.getInt("width") : -1;
+        height = options.hasKey("height") ? options.getInt("height") : -1;
         cropping = options.hasKey("cropping") ? options.getBoolean("cropping") : cropping;
         cropperActiveWidgetColor = options.hasKey("cropperActiveWidgetColor") ? options.getString("cropperActiveWidgetColor") : cropperActiveWidgetColor;
         cropperStatusBarColor = options.hasKey("cropperStatusBarColor") ? options.getString("cropperStatusBarColor") : cropperStatusBarColor;
@@ -610,10 +610,13 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
             configureCropperColors(options);
         }
 
-        UCrop.of(uri, Uri.fromFile(new File(this.getTmpDir(activity), UUID.randomUUID().toString() + ".jpg")))
-                .useSourceImageAspectRatio()
-                .withOptions(options)
-                .start(activity);
+        if (width != -1 && height != -1)
+            UCrop.of(uri, Uri.fromFile(new File(this.getTmpDir(activity), UUID.randomUUID().toString() + ".jpg")))
+                    .withMaxResultSize(width, height).withAspectRatio(width, height).withOptions(options)
+                    .start(activity);
+        else
+            UCrop.of(uri, Uri.fromFile(new File(this.getTmpDir(activity), UUID.randomUUID().toString() + ".jpg")))
+                    .useSourceImageAspectRatio().withOptions(options).start(activity);
     }
 
     private void imagePickerResult(Activity activity, final int requestCode, final int resultCode, final Intent data) {
